@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="default">
+
+	<Import Project="0.Properties.proj" />
+
+	<UsingTask AssemblyFile="$(MSBuildExtensions)" TaskName="MSBuild.Community.Tasks.XmlUpdate" />
+	
+	<PropertyGroup>
+		<PackageDir>$(BuildDir)\Packages</PackageDir>
+	</PropertyGroup>
+	
+	
+	<Target Name="default">
+		<Exec Command="$(BaseDir)\.NuGet\NuGet install $(MSBuildProjectDirectory)\packages.config -o $(BaseDir)\packages" />
+		
+		<!-- Some cleaning up -->
+		<RemoveDir Directories="$(PackageDir)" />
+		<CallTarget Targets="PackageNuPacks" />
+	</Target>
+
+	
+	<Target Name="CleanUp">
+		<RemoveDir Directories="$(BuildDir)" />
+	</Target>
+	
+	<Target Name="PackageNuPacks" Inputs="@(NuGetProject)" Outputs="%(NuGetProject.Identity)" DependsOnTargets="CleanUp">
+		<Message Text="%(NuGetProject.Identity)" />
+		
+		<!-- Input parameters aren't working with all actions. Copying to property group helps.. -->
+		<PropertyGroup>
+			<projectName>%(NuGetProject.Identity)</projectName>
+			<addContent>%(NuGetProject.AddContent)</addContent>
+			<contectDir>$(srcDirectory)\%(NuGetProject.Identity)\NuGetPackageContent</contectDir>
+			<tempFolder>$(PackageDir)\temp\%(NuGetProject.Identity)</tempFolder>
+			<nuspecFile>$(tempFolder)\%(NuGetProject.Identity).nuspec</nuspecFile>			
+		</PropertyGroup>
+	
+		<!-- First copy the nuspec template files to the package dir -->
+        <Copy SourceFiles="$(srcDirectory)\$(projectName)\$(projectName).nuspec" DestinationFolder="$(tempFolder)" />
+        
+        <!-- Copy the files to the package dir -->
+		<ItemGroup>
+		   <projectFiles Include="$(srcDirectory)\$(projectName)\bin\$(BuildConfiguration)\**\$(projectName).*" />
+		   <contentFiles Include="$(contectDir)\**\*" /> 
+		</ItemGroup>
+		
+        <Copy SourceFiles="@(projectFiles)" DestinationFolder="$(tempFolder)\lib\Net40\%(RecursiveDir)" />
+		<Copy SourceFiles="@(contentFiles)" DestinationFiles="@(contentFiles->'$(tempFolder)\%(RecursiveDir)%(Filename)%(Extension)')"/>
+		
+		<Exec WorkingDirectory="$(BuildDir)\Packages" Command="&quot;$(MSBuildProjectDirectory)\..\.nuget\nuget.exe&quot; pack &quot;$(nuspecFile)&quot;" />
+    </Target>
+
+</Project>

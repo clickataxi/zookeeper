@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ZooKeeper.Net</id>
+        <version>3.4.6.6</version>
+        <title>Apache ZooKeeper .NET Client</title>
+        <authors>Apache ZooKeeper</authors>
+        <owners>Apache ZooKeeper</owners>
+        <licenseUrl>http://www.apache.org/licenses/</licenseUrl>
+        <projectUrl>https://github.com/clickataxi/zookeeper</projectUrl>
+        <iconUrl>http://www.apache.org/images/feather-small.gif</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Apache ZooKeeper Client for .NET (http://zookeeper.apache.org)</description>
+        <summary>Apache ZooKeeper .Net library built from https://github.com/clickataxi/zookeeper</summary>
+        <copyright>Copyright 2016</copyright>
+        <tags>Apache ZooKeeper Drivr</tags>
+        <dependencies>
+            <dependency id="log4net" version="2.0.3" />
+        </dependencies>
+    </metadata>
+</package>
